@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pothole Detection</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 10px 30px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .navbar .logo img {
+      width: 30px;
+      margin-right: 10px;
+    }
+
+    .navbar nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .navbar nav a.active {
+      background: #aa00ff;
+    }
+
+    .navbar nav a:hover {
+      background: #444;
+    }
+
+    .page {
+      display: none;
+      padding: 100px 30px 60px;
+    }
+
+    .page.active {
+      display: block;
+    }
+body{
+    background: url('https://images.pexels.com/photos/756861/pexels-photo-756861.jpeg?cs=srgb&dl=pexels-jonathan-aman-234110-756861.jpg&fm=jpg') no-repeat center center/cover;
+    height: 100vh;
+}
+    /* Hero/Home Page */
+    #home {
+
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #home h1 {
+      font-size: 50px;
+      text-shadow: 2px 2px 8px black;
+    }
+
+    #home p {
+      font-size: 20px;
+      color: yellow;
+      text-shadow: 1px 1px 6px black;
+    }
+
+    /* Upload and Live pages */
+    .page h2 {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    form, .button-wrapper {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    input[type="file"], input[type="submit"], button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    a button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    a button:hover {
+      background-color: #45a049;
+    }
+
+    /* Login Page */
+    .login-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div class="login-container" id="loginPage">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="submit" value="Login">
+    </form>
+    <p class="error" id="error-message">Invalid username or password. Please try again.</p>
+  </div>
+
+  <!-- Navbar -->
+  <div class="navbar" id="navbar" style="display: none;">
+    <div class="logo">
+      <img src="https://img.icons8.com/ios-filled/50/FFFFFF/road.png" alt="Logo" />
+      PATHOLE DETECTION
+    </div>
+    <nav>
+      <a onclick="showPage('home')" id="nav-home" class="active">HOME</a>
+      <a onclick="showPage('upload')" id="nav-upload">UPLOAD</a>
+      <a onclick="showPage('live')" id="nav-live">LIVE CLASSIFICATION</a>
+      <a href="#">LOGOUT</a>
+    </nav>
+  </div>
+
+  <!-- Pages -->
+  <div id="home" class="page">
+    <h1>WELCOME!</h1>
+    <p>Detecting road damage pothole detection using deep learning</p>
+  </div>
+
+  <div id="upload" class="page">
+    <h2>Upload an Image for Detection</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <br>
+      <input type="submit" value="Upload and Detect">
+    </form>
+  </div>
+
+  <div id="live" class="page">
+    <h2>Real-Time Pothole Detection</h2>
+    <div class="button-wrapper">
+      <a href="/start_real_time"><button>Start Real-Time Detection</button></a>
+    </div>
+  </div>
+
+  <script>
+    // Initially hide the home page
+    document.getElementById('home').style.display = 'none';
+
+    // Login Script
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      var username = document.getElementById('username').value;
+      var password = document.getElementById('password').value;
+
+      // Example login credentials
+      if (username === 'batch45' && password === 'batch45@123') {
+        // Hide the login page and show the navbar + home page
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('navbar').style.display = 'flex';
+        document.getElementById('home').style.display = 'block';
+        showPage('home');
+      } else {
+        document.getElementById('error-message').style.display = 'block';
+      }
+    });
+
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none'; // Ensure the page is hidden
+      });
+
+      // Show the selected page
+      document.getElementById(pageId).classList.add('active');
+      document.getElementById(pageId).style.display = 'block'; // Make the page visible
+
+      // Update navbar active class
+      document.querySelectorAll('.navbar nav a').forEach(link => {
+        link.classList.remove('active');
+      });
+      document.getElementById('nav-' + pageId).classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
